@@ -1,10 +1,17 @@
-import { db } from "@/lib/firebase";
-import { collection, query, limit, getDocs, getCountFromServer, addDoc, Timestamp } from "firebase/firestore";
+import { db, auth } from "@/lib/firebase";
+import { collection, query, where, getDocs, getCountFromServer, addDoc, Timestamp } from "firebase/firestore";
 
 export const createTranscript = async (content, title) => {
 	try {
+		const currentUser = auth.currentUser;
+
+		if ( ! currentUser ) {
+			throw new Error("User not authenticated");
+		}
+
 		const newTranscript = {
 			content: content,
+			userId: currentUser.uid,
 			title: title,
 			createdAt: Timestamp.now(),
 		};
@@ -21,9 +28,16 @@ export const createTranscript = async (content, title) => {
 
 export const fetchRecentTranscripts = async () => {
 	try {
+		const currentUser = auth.currentUser;
+		if (!currentUser) {
+			throw new Error("User not authenticated");
+		}
+
+		// Query only transcripts where userId matches the current user
 		const q = query(
 			collection(db, "transcripts"),
-			limit(20) 
+			where("userId", "==", currentUser.uid),
+
 		);
 
 		const querySnapshot = await getDocs(q);
@@ -32,23 +46,10 @@ export const fetchRecentTranscripts = async () => {
 			...doc.data(),
 		}));
 
-		console.log("Recent Transcripts:", transcripts);
+		console.log("User's Recent Transcripts:", transcripts);
 		return transcripts;
 	} catch (error) {
 		console.error("Error fetching transcripts:", error);
 		return [];
 	}
 };
-
-export const fetchTotalTranscripts = async () => {
-	try {
-		const coll = collection(db, "transcripts");
-		const snapshot = await getCountFromServer(coll);
-		const total = snapshot.data().count;
-
-		return total;
-	} catch (error) {
-		return 0;
-	}
-};
-  

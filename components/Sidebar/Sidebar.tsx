@@ -1,5 +1,7 @@
 "use client";
 
+import { useAuth } from "@/context/AuthContext";
+import { logOut } from "@/lib/authentication/authentication";
 import { useRouter, usePathname } from "next/navigation";
 import { ReactNode, useState } from "react";
 import { Toaster } from "../ui/sonner";
@@ -13,6 +15,7 @@ type SideBarProps = {
 export default function SideBar({ children }: SideBarProps) {
 	const router = useRouter();
 	const pathname = usePathname();
+	const { user } = useAuth();
 
 	const homeClickHandler = (e) => {
 		e.preventDefault();
@@ -24,9 +27,16 @@ export default function SideBar({ children }: SideBarProps) {
 		router.push('/settings')
 	};
 
+	const handleLogout = (e) => {
+		e.preventDefault();
+		logOut();
+		router.push('/login')
+	};
+
+
 	return (
 		<div className="flex h-screen bg-gray-100 dark:bg-gray-900">
-			<aside className="flex">
+			{user && <aside className="flex">
 				<div className="flex flex-col items-center w-16 h-screen py-8 bg-white dark:bg-gray-900 dark:border-gray-700">
 					<nav className="flex flex-col items-center flex-1 space-y-8 ">
 
@@ -43,14 +53,14 @@ export default function SideBar({ children }: SideBarProps) {
 
 					<div className="flex flex-col items-center mt-4 space-y-4">
 
-						<a href="#" className="text-gray-500 transition-colors duration-200 rotate-180 dark:text-gray-400 rtl:rotate-0 hover:text-blue-500 dark:hover:text-blue-400">
+						<a onClick={(e) => {handleLogout(e)}} href="#" className="text-gray-500 transition-colors duration-200 rotate-180 dark:text-gray-400 rtl:rotate-0 hover:text-blue-500 dark:hover:text-blue-400">
 							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
 								<path strokeLinecap="round" strokeLinejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15M12 9l-3 3m0 0l3 3m-3-3h12.75" />
 							</svg>
 						</a>
 					</div>
 				</div>
-			</aside>
+			</aside>}
 
 			<main className="flex-1 p-6 overflow-auto bg-gray-50">
 				{children}

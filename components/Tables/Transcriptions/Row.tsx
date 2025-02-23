@@ -1,3 +1,5 @@
+import { formatFBDate } from "@/lib/helpers";
+
 type Props = {
 	title: string;
 	date: string;
@@ -15,7 +17,7 @@ export default function Row({ title, date }: Props) {
 					</div>
 				</div>
 			</td>
-			<td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{date}</td>
+			<td className="px-4 py-4 text-sm text-gray-500 dark:text-gray-300 whitespace-nowrap">{formatFBDate(date)}</td>
 		</tr>
 	);
 }

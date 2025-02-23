@@ -6,8 +6,8 @@ type Props = {
 };  
 
 export default function Table({ rows }: Props) {
-	const tableRows = rows.map(({ id, title, content }) => (
-		<Row key={id} title={title} length={content.length} date=""/>
+	const tableRows = rows.map(({ id, title, content, createdAt }) => (
+		<Row key={id} title={title} length={content.length} date={createdAt}/>
 	));
 
 	return (

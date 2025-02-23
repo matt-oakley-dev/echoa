@@ -3,24 +3,25 @@
 import SkeletonTable from "@/components/Tables/Skeleton/SkeletonTable";
 import TranscriptTable from "@/components/Tables/Transcriptions/Table";
 import { Button } from "@/components/ui/button";
-import { fetchRecentTranscripts, fetchTotalTranscripts } from "@/lib/fetch/transcripts";
+import withAuth from "@/lib/authentication/withAuth";
+import { fetchRecentTranscripts } from "@/lib/fetch/transcripts";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function DashboardLayout() {
+function DashboardLayout() {
 	const router = useRouter();
 
 	const [transcripts, setTranscripts] = useState([]);
-	const [totalTranscripts, setTotalTranscripts] = useState(0);
+	const [loading, setLoading] = useState(false);
 
 	useEffect(() => {
 		const loadTranscripts = async () => {
+			setLoading(true);
 			const fetchedTranscripts = await fetchRecentTranscripts();
-			const fetchedTotal       = await fetchTotalTranscripts();
 
 
 			setTranscripts(fetchedTranscripts)
-			setTotalTranscripts(fetchedTotal)
+			setLoading(false);
 		};
 	
 		loadTranscripts();
@@ -40,8 +41,11 @@ export default function DashboardLayout() {
 					</Button>
 				</div>
 
-				{transcripts.length > 1 ? <TranscriptTable rows={transcripts}/> : <SkeletonTable/>}
+				{loading && transcripts.length === 0 ? <SkeletonTable/> : ''}
+				{!loading && transcripts.length >= 1 ? <TranscriptTable rows={transcripts}/> : <p>No notes created yet</p>}
 			</section>
 		</>
 	);
 }
+
+export default withAuth(DashboardLayout, []);

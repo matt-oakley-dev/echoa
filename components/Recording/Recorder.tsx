@@ -98,7 +98,7 @@ export default function Recorder({ setTranscript, setTranscribing }: RecorderPro
 	return (
 		<>
 			<div className="max-w-md w-full">
-				<p className="block text-sm text-gray-500 dark:text-gray-300">Recording</p>
+				<p className="block text-sm text-gray-500 dark:text-gray-300">Record Voice Note</p>
 
 				<div className="flex flex-col items-center justify-center w-full max-w-lg p-5 mx-auto mt-2 text-center bg-white border-2 border-gray-300 border-dashed cursor-pointer dark:bg-gray-900 dark:border-gray-700 rounded-xl">
 					{false === isRecording ? <FalseRecording/> : <LiveRecording/>}

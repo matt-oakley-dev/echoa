@@ -1,7 +1,11 @@
+"use client";
+
 import { useState } from "react";
 
 import BackButton from "@/components/BackButton/BackButton";
 import { createTranscript } from "@/lib/fetch/transcripts";
+import { useRouter, usePathname } from "next/navigation";
+import TranscriptionEditorSkeleton from "./TranscriptionEditorSkeleton";
 
 type EditorProps = {
 	initTranscript: string;
@@ -9,14 +13,23 @@ type EditorProps = {
 };
   
 export default function TranscriptionEditor({ initTranscript, initTitle }: EditorProps) {
+	const router = useRouter();
+
 	const [title, setTitle] = useState(initTitle);
 	const [description, setDescription] = useState(initTranscript);
+	const [isSaving, setSaving] = useState(false);
 
 	const saveNote = async () => {
-		console.log('test');
-
+		setSaving(true);
 		const newNote = await createTranscript(description, title);
+		setSaving(false);
+
+		router.push('/')
 	};
+
+	if ( isSaving ) {
+		<TranscriptionEditorSkeleton/>
+	}
 
 	return (
 		<>
